@@ -1,16 +1,15 @@
 module Prime where
 
-isPrime :: Integer -> Bool
-isPrime n = nope2 (iter 2 (factor2 (n-1)) n) n
+-- 3057601 isnt prime but outputs as one
+-- same for 252601
+-- 3057601 = 47 * 71107
+-- 252601 = 41 * 6161
 
-teste :: Integer -> [Integer]
-teste n = iter 2 (factor2 (n-1)) n
+maybePrime :: Integer -> Integer -> Bool
+maybePrime n a = nope2 (iter a (factor2 (n-1)) n) n
 
-factorN :: Integer -> Integer -> (Integer, Integer)
-factorN n x = fN n x 0
-    where
-    fN n x s | even n    = fN (n `div` x) x (s + 1)
-             | otherwise = (n,s)
+teste :: Integer ->Integer -> [Integer]
+teste n a = iter a (factor2 (n-1)) n
 
 factor2 :: Integer -> (Integer, Integer)
 factor2 n = f2 n 0
@@ -49,6 +48,3 @@ nope2 :: [Integer] -> Integer -> Bool
 nope2 xs n
     | has_one xs    = nope xs n 
     | otherwise     = False
-
-primesTo100 :: [Integer]
-primesTo100 = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
