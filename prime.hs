@@ -1,9 +1,23 @@
 module Prime where
 
+import System.Random
+import Control.Monad
+import System.IO.Unsafe -- Whoops
+
 -- 3057601 isnt prime but outputs as one
 -- same for 252601
+--
 -- 3057601 = 47 * 71107
 -- 252601 = 41 * 6161
+--
+-- 3825123056546413051
+-- needed 1M random witnesses to be considered false
+
+findPrime :: Integer -> Int -> Integer
+findPrime b k = head (dropWhile (\x -> not (millerRabin x k)) (dropWhile (\x -> x < 10^(b-1)) (witnesses 10000000000000000 (100^b))))
+
+millerRabin :: Integer -> Int -> Bool
+millerRabin n k = and $ map (maybePrime n) (witnesses k n)
 
 maybePrime :: Integer -> Integer -> Bool
 maybePrime n a = nope2 (iter a (factor2 (n-1)) n) n
@@ -30,7 +44,14 @@ is_one 1 = True
 is_one _ = False
 
 power :: Integer -> (Integer, Integer) -> Integer -> Integer
-power a (d, k) n = (a^d) `mod` n
+--power a (d, k) n = (a^d) `mod` n
+power a (d, k) n = powm a d n 1
+
+-- Got from rosetta code modular exponentiation page
+powm :: Integer -> Integer -> Integer -> Integer -> Integer
+powm b 0 m r = r
+powm b e m r | e `mod` 2 == 1 = powm (b * b `mod` m) (e `div` 2) m (r * b `mod` m)
+powm b e m r = powm (b * b `mod` m) (e `div` 2) m r
 
 has_one :: [Integer] -> Bool
 has_one [] = False
@@ -41,6 +62,7 @@ has_one ys = h2 ys where
 
 nope :: [Integer] -> Integer -> Bool
 nope (x:xs) n
+     -- | head xs == 1  = (congruente (x^2) (-1) n)
      | head xs == 1  = (congruente (x^2) (-1) n) || (congruente (x^2) (1) n)
      | otherwise     = nope xs n
 
@@ -48,3 +70,12 @@ nope2 :: [Integer] -> Integer -> Bool
 nope2 xs n
     | has_one xs    = nope xs n 
     | otherwise     = False
+
+witnesses :: Int -> Integer -> [Integer]
+witnesses k n = unsafePerformIO (witnessesNoob k n)
+
+witnessesNoob :: Int -> Integer -> IO [Integer]
+witnessesNoob k n = do g <- newStdGen
+                       return $ take k (randomRs (2,n-1) g)
+
+
