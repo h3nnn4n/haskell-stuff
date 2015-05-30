@@ -13,8 +13,15 @@ import System.IO.Unsafe -- Whoops
 -- 3825123056546413051
 -- needed 1M random witnesses to be considered false
 
+keyMaker :: Int -> Integer -> [Integer]
+keyMaker k n = unsafePerformIO (keyMakerNoob k n)
+
+keyMakerNoob :: Int -> Integer -> IO [Integer]
+keyMakerNoob k n = do g <- newStdGen
+                      return $ take k (randomRs (10^(n), 10^(n+5)-2) g)
+
 findPrime :: Integer -> Int -> Integer
-findPrime b k = head (dropWhile (\x -> not (millerRabin x k)) (dropWhile (\x -> x < 10^(b-1)) (witnesses 10000000000000000 (100^b))))
+findPrime b k = head (dropWhile (\x -> not (millerRabin x k)) (dropWhile (\x -> x < 10^(b-1)) (keyMaker 10000000000000000 b)))
 
 millerRabin :: Integer -> Int -> Bool
 millerRabin n k = and $ map (maybePrime n) (witnesses k n)
