@@ -18,3 +18,4 @@ cypher m (e, n) = powm m e n 1
 decypher m (d, n) = powm m d n 1
 
 --getPhi p q = (p-1)*(q-1)
+

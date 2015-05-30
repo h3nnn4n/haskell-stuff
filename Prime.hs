@@ -4,21 +4,12 @@ import System.Random
 import Control.Monad
 import System.IO.Unsafe -- Whoops
 
--- 3057601 isnt prime but outputs as one
--- same for 252601
---
--- 3057601 = 47 * 71107
--- 252601 = 41 * 6161
---
--- 3825123056546413051
--- needed 1M random witnesses to be considered false
-
 keyMaker :: Int -> Integer -> [Integer]
-keyMaker k n = unsafePerformIO (keyMakerNoob k n)
+keyMaker k n = unsafePerformIO (keyMakerNoob k (n-1))
 
 keyMakerNoob :: Int -> Integer -> IO [Integer]
 keyMakerNoob k n = do g <- newStdGen
-                      return $ take k (randomRs (10^(n), 10^(n+5)-2) g)
+                      return $ take k (randomRs (10^(n), 10^(n+1)-1) g)
 
 findPrime :: Integer -> Int -> Integer
 findPrime b k = head (dropWhile (\x -> not (millerRabin x k)) (dropWhile (\x -> x < 10^(b-1)) (keyMaker 10000000000000000 b)))
@@ -84,5 +75,4 @@ witnesses k n = unsafePerformIO (witnessesNoob k n)
 witnessesNoob :: Int -> Integer -> IO [Integer]
 witnessesNoob k n = do g <- newStdGen
                        return $ take k (randomRs (2,n-1) g)
-
 
