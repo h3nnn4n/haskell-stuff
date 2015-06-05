@@ -9,7 +9,13 @@ findPrime :: Integer -> Int -> Integer
 findPrime b k = head (dropWhile (\x -> not (millerRabin x k)) (keyMaker 10000000000000000 b))
 
 millerRabin :: Integer -> Int -> Bool
-millerRabin n k = and $ map (maybePrime n) (witnesses k n)
+millerRabin _ 0 = False
+millerRabin 2 _ = True
+millerRabin n k
+    | k == 0    = False
+    | n == 2    = True
+    | n < 2     = False
+    | otherwise = and $ map (maybePrime n) (witnesses k n)
 
 maybePrime :: Integer -> Integer -> Bool
 maybePrime n a = satisfy (iter a (factor2 (n-1)) n) n
