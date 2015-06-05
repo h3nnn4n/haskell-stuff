@@ -1,6 +1,6 @@
 HSFLAGS=-w
 
-all: isPrime primeGen notBombe
+all: isPrime primeGen notBombe mersenneGen
 
 notBombe:
 	ghc notBombe	$(HSFLAGS)
@@ -10,6 +10,9 @@ isPrime:
 
 primeGen:
 	ghc primeGen	$(HSFLAGS)
+
+mersenneGen:
+	ghc mersenneGen $(HSFLAGS)
 
 clean:
 	-rm primeGen isPrime notBombe *.{o,hi}
