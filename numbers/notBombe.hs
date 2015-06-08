@@ -1,4 +1,3 @@
-import Rsa
 import Prime
 
 import System.Environment
