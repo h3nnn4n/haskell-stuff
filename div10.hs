@@ -1,27 +1,33 @@
+import System.Environment
 import System.IO
 import Data.List.Extra
 
-next file = do
+next file numb = do
     end <-  hIsEOF file
-    if end then return () else next' file
+    if end then return () else next' file numb
 
-next' file = do
+next' file numb = do
     tx <- hGetLine file
 
     let ss = split (==' ') tx
         ff = read ( last $ take 1 ss ) :: Int
         ll = read ( last ss ) :: Int
 
-        ff' = show ( ff `div` 10 )
-        ll' = show ( ll `div` 10 )
+        ff' = show ( ff `div` numb )
+        ll' = show ( ll `div` numb )
 
     putStrLn $ ff' ++ " " ++ ll'
 
-    next file
+    next file numb
 
 main = do
-    file <- openFile "76_pr" ReadMode
+    args <- getArgs
 
-    next file
+    let name = args !! 0
+        numb = read (args !! 1)
+
+    file <- openFile name ReadMode
+
+    next file numb
 
     hClose file
